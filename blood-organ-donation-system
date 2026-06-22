@@ -1,0 +1,225 @@
+// File: donation/MenuDrivenDonationSystem.java
+Package donation;
+
+Import java.util.*;
+
+// ================== INTERFACE ==================
+Interface Donation {
+    Void donate();
+}
+
+// ================== CUSTOM EXCEPTION ==================
+Class InvalidDonationException extends Exception {
+    Public InvalidDonationException(String message) {
+        Super(message);
+    }
+}
+
+// ================== DONOR CLASS ==================
+Class Donor implements Donation {
+    Private String name;
+    Private int age;
+    Private String bloodGroup;
+    Private String organ; // null if only blood donor
+
+    Public Donor(String name, int age, String bloodGroup, String organ) {
+        This.name = name;
+        This.age = age;
+        This.bloodGroup = bloodGroup;
+        This.organ = organ;
+    }
+
+    Public String getBloodGroup() {
+        Return bloodGroup;
+    }
+
+    Public String getOrgan() {
+        Return organ;
+    }
+
+    @Override
+    Public void donate() {
+        System.out.println(name + “ registered as a donor of “ +
+                (organ != null ? organ : “Blood”) +
+                “ [Blood Group: “ + bloodGroup + “]”);
+    }
+
+    @Override
+    Public String toString() {
+        Return “Donor: “ + name + “, Age: “ + age + “, BloodGroup: “ + bloodGroup +
+                (organ != null ? “, Organ: “ + organ : “, Blood donor”);
+    }
+}
+
+// ================== RECIPIENT CLASS ==================
+Class Recipient {
+    Private String name;
+    Private String requiredBloodGroup;
+    Private String requiredOrgan;
+
+    Public Recipient(String name, String requiredBloodGroup, String requiredOrgan) {
+        This.name = name;
+        This.requiredBloodGroup = requiredBloodGroup;
+        This.requiredOrgan = requiredOrgan;
+    }
+
+    Public String getRequiredBloodGroup() {
+        Return requiredBloodGroup;
+    }
+
+    Public String getRequiredOrgan() {
+        Return requiredOrgan;
+    }
+
+    @Override
+    Public String toString() {
+        Return “Recipient: “ + name + “, Needs “ +
+                (requiredOrgan != null ? requiredOrgan : “Blood”) +
+                “ [Blood Group: “ + requiredBloodGroup + “]”;
+    }
+}
+
+// ================== HOSPITAL CLASS ==================
+Class Hospital {
+    Private List<Donor> donorList = new ArrayList<>();
+    Private List<Recipient> recipientList = new ArrayList<>();
+
+    // Register donor
+    Public void registerDonor(Donor donor) {
+        donorList.add(donor);
+        donor.donate();
+    }
+
+    // Register recipient
+    Public void registerRecipient(Recipient recipient) {
+        recipientList.add(recipient);
+        System.out.println(“Recipient registered: “ + recipient);
+    }
+
+    // Match recipient with donor
+    Public void matchRecipient(Recipient recipient) throws InvalidDonationException {
+        Boolean found = false;
+        For (Donor donor : donorList) {
+            // Organ donation
+            If (recipient.getRequiredOrgan() != null && donor.getOrgan() != null &&
+                    Recipient.getRequiredOrgan().equalsIgnoreCase(donor.getOrgan()) &&
+                    Recipient.getRequiredBloodGroup().equalsIgnoreCase(donor.getBloodGroup())) {
+                System.out.println(“Match found!\n” + donor + “\n” + recipient);
+                Found = true;
+                Break;
+            }
+            // Blood donation
+            Else if (recipient.getRequiredOrgan() == null && donor.getOrgan() == null &&
+                    Recipient.getRequiredBloodGroup().equalsIgnoreCase(donor.getBloodGroup())) {
+                System.out.println(“ Blood donation match found!\n” + donor + “\n” + recipient);
+                Found = true;
+                Break;
+            }
+        }
+        If (!found) {
+            Throw new InvalidDonationException(“ No matching donor found for “ + recipient);
+        }
+    }
+
+    // Display donors
+    Public void displayDonors() {
+        If (donorList.isEmpty()) {
+            System.out.println(“No donors registered yet.”);
+        } else {
+            System.out.println(“=== List of Donors ===”);
+            For (Donor d : donorList) {
+                System.out.println(d);
+            }
+        }
+    }
+
+    // Display recipients
+    Public void displayRecipients() {
+        If (recipientList.isEmpty()) {
+            System.out.println(“ No recipients registered yet.”);
+        } else {
+            System.out.println(“=== List of Recipients ===”);
+            For (Recipient r : recipientList) {
+                System.out.println(r);
+            }
+        }
+    }
+}
+
+// ================== MAIN MENU CLASS ==================
+Public class MenuDrivenDonationSystem {
+    Public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Hospital hospital = new Hospital();
+
+        While (true) {
+            System.out.println(“\n===== Blood & Organ Donation System =====”);
+            System.out.println(“1. Register Donor”);
+            System.out.println(“2. Register Recipient & Search Donor”);
+            System.out.println(“3. Display All Donors”);
+            System.out.println(“4. Display All Recipients”);
+            System.out.println(“5. Exit”);
+           Try{
+.        System.out.print(“Enter your choice: “);
+            Int choice = sc.nextInt();
+            Sc.nextLine(); // consume newline
+Catch(Exception e)
+{
+System.out.println(e.getMessage());
+}
+
+            Switch (choice) {
+                Case 1:
+                   System.out.print(“Enter Donor Name: “);
+                    String dName = sc.nextLine();
+                    System.out.print(“Enter Age: “);
+                   If(dAge<18)throw new InvalidAgeex Int dAge = sc.nextInt();
+                    Sc.nextLine();
+                    System.out.print(“Enter Blood Group: “);
+                    String dBlood = sc.nextLine();
+                    System.out.print(“Enter Organ to Donate (leave blank if blood donor): “);
+                    String dOrgan = sc.nextLine();
+                    If (dOrgan.isBlank()) dOrgan = null;
+
+                    Donor donor = new Donor(dName, dAge, dBlood, dOrgan);
+                    Hospital.registerDonor(donor);
+                    Break;
+
+                Case 2:
+                    System.out.print(“Enter Recipient Name: “);
+                    String rName = sc.nextLine();
+                    System.out.print(“Enter Required Blood Group: “);
+                    String rBlood = sc.nextLine();
+                    System.out.print(“Enter Required Organ (leave blank if needs blood): “);
+                    String rOrgan = sc.nextLine();
+                    If (rOrgan.isBlank()) rOrgan = null;
+
+                    Recipient recipient = new Recipient(rName, rBlood, rOrgan);
+                    Hospital.registerRecipient(recipient);
+
+                    Try {
+                        Hospital.matchRecipient(recipient);
+                    } catch (InvalidDonationException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    Break;
+
+                Case 3:
+                    Hospital.displayDonors();
+                    Break;
+
+                Case 4:
+                    Hospital.displayRecipients();
+                    Break;
+
+                Case 5:
+                    System.out.println(“Exiting... Thank you!”);
+                    Sc.close();
+                    Return;
+
+                Default:
+                    System.out.println(“Invalid choice, try again.”);
+            }
+        }
+    }
+}
